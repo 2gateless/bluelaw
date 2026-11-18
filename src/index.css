@@ -429,3 +429,281 @@ html, body {
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
+
+.tab-loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+/* 변호사 카드 버튼 및 폴백 */
+button.lawyer-card-v2 {
+  width: calc(100% - 30px);
+  text-align: left;
+  font-family: inherit;
+}
+
+.lawyer-photo-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9ecef;
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* 업무분야 버튼 */
+button.service-item-v2 {
+  width: 100%;
+  font-family: inherit;
+}
+
+/* 성공사례 탭 */
+.cases-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 16px;
+}
+
+.cases-search-wrap {
+  padding: 0 16px 10px;
+}
+
+.cases-search-box {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  padding: 6px 12px;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cases-search-input {
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+  width: 100%;
+  background: transparent;
+  font-family: inherit;
+  color: var(--text-main);
+}
+
+.cases-search-clear {
+  background: none;
+  border: none;
+  color: #999999;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.cases-chips {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 0 16px 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cases-chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #dddddd;
+  background: var(--card-bg);
+  color: #444444;
+  font-size: 0.8rem;
+  font-weight: 400;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.cases-chip.selected {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.cases-list {
+  padding: 0 16px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cases-empty-box {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888888;
+  font-size: 0.9rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+}
+
+.case-card {
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s ease;
+}
+
+.case-card:active {
+  transform: scale(0.99);
+}
+
+.case-type-badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f3efe6;
+  color: var(--primary);
+}
+
+.case-title-text {
+  flex: 1;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.cases-load-more-btn {
+  margin-top: 6px;
+  padding: 10px 16px;
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--card-bg);
+  color: var(--primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+/* IframeViewer */
+.iframe-viewer-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.iframe-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--secondary);
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.iframe-nav-btn {
+  background: none;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: #555555;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: inherit;
+}
+
+.iframe-nav-btn.back {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.iframe-viewer-title {
+  font-size: 0.95rem;
+  color: var(--primary);
+  font-family: 'Noto Serif KR', serif;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.iframe-frame-wrap {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.iframe-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-traditional);
+  z-index: 10;
+  padding: 20px;
+  text-align: center;
+}
+
+.iframe-fallback-btn {
+  margin-top: 8px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  font-size: 0.82rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.iframe-element {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+  display: block;
+}
+
+/* 키보드 포커스 접근성 */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}

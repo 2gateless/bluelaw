@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
-import { Search, ChevronRight, X } from 'lucide-react';
+import React, { useState, useMemo, useDeferredValue, useEffect, useCallback, memo } from 'react';
+import { Search, ChevronRight, X, RotateCw } from 'lucide-react';
 
-const CATEGORIES = [
+// 기본 카테고리 표시 순서
+const DEFAULT_CATEGORIES = [
   '전체',
   '민사',
   '형사',
@@ -10,73 +11,105 @@ const CATEGORIES = [
   '기업회생 및 파산',
 ];
 
-export default function CasesTab({ cases, onOpenPage }) {
+const PAGE_SIZE = 30;
+
+// 개별 사례 카드 메모이제이션
+const CaseItem = memo(function CaseItem({ item, onSelect }) {
+  return (
+    <button
+      type="button"
+      className="case-card"
+      onClick={() => onSelect(item)}
+    >
+      <span className="case-type-badge">{item.type}</span>
+      <span className="case-title-text">{item.title}</span>
+      <ChevronRight size={14} style={{ flexShrink: 0, color: '#999' }} />
+    </button>
+  );
+});
+
+export default function CasesTab({ cases, loading, error, onRetry, onOpenPage }) {
   const [activeCategory, setActiveCategory] = useState('전체');
   const [searchQuery, setSearchQuery] = useState('');
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  // 검색 입력 시 UI 응답성을 유지하기 위해 지연된 검색어 사용
+  const deferredQuery = useDeferredValue(searchQuery);
+
+  // 데이터에 신규 카테고리가 추가되어도 자동으로 필터 칩에 반영
+  const categories = useMemo(() => {
+    const extraTypes = new Set();
+    for (const item of cases) {
+      if (item.type && !DEFAULT_CATEGORIES.includes(item.type)) {
+        extraTypes.add(item.type);
+      }
+    }
+    return [...DEFAULT_CATEGORIES, ...extraTypes];
+  }, [cases]);
+
+  // 검색어 및 카테고리 기반 필터링 (정규화는 루프 외부에서 1회 수행)
   const filteredCases = useMemo(() => {
+    const q = deferredQuery.trim().toLowerCase();
     return cases.filter((item) => {
-      const matchCategory =
-        activeCategory === '전체' || item.type === activeCategory;
-      if (!matchCategory) return false;
-
-      if (!searchQuery.trim()) return true;
-      const q = searchQuery.toLowerCase().trim();
+      if (activeCategory !== '전체' && item.type !== activeCategory) {
+        return false;
+      }
+      if (!q) return true;
       return (
         item.title.toLowerCase().includes(q) ||
         item.type.toLowerCase().includes(q)
       );
     });
-  }, [cases, activeCategory, searchQuery]);
+  }, [cases, activeCategory, deferredQuery]);
+
+  // 카테고리나 검색어가 변경되면 표시 개수를 초기화
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [activeCategory, deferredQuery]);
+
+  const visibleCases = useMemo(
+    () => filteredCases.slice(0, visibleCount),
+    [filteredCases, visibleCount]
+  );
+
+  const hasMore = visibleCount < filteredCases.length;
+
+  const handleSelectCase = useCallback(
+    (item) => {
+      onOpenPage({
+        title: `[${item.type}] ${item.title}`,
+        url: item.url,
+      });
+    },
+    [onOpenPage]
+  );
 
   return (
     <div className="tab-container">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingRight: '16px' }}>
+      <div className="cases-header-row">
         <h2 className="section-header" style={{ margin: '20px 16px 10px', flex: 1 }}>
           성공 사례 ({filteredCases.length}건)
         </h2>
       </div>
 
-      {/* Search Bar */}
-      <div style={{ padding: '0 16px 10px' }}>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            background: '#ffffff',
-            border: '1px solid var(--border-light)',
-            borderRadius: '20px',
-            padding: '6px 12px',
-            gap: '8px',
-            boxShadow: 'var(--shadow-sm)',
-          }}
-        >
+      {/* 검색창 */}
+      <div className="cases-search-wrap">
+        <div className="cases-search-box">
           <Search size={16} style={{ color: '#888', flexShrink: 0 }} />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="사례 제목 또는 키워드 검색..."
-            style={{
-              border: 'none',
-              outline: 'none',
-              fontSize: '0.85rem',
-              width: '100%',
-              background: 'transparent',
-              fontFamily: 'inherit',
-            }}
+            aria-label="성공 사례 검색"
+            className="cases-search-input"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#999',
-                cursor: 'pointer',
-                padding: '2px',
-              }}
+              aria-label="검색어 지우기"
+              className="cases-search-clear"
             >
               <X size={14} />
             </button>
@@ -84,35 +117,18 @@ export default function CasesTab({ cases, onOpenPage }) {
         </div>
       </div>
 
-      {/* Category Filter Chips */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '6px',
-          overflowX: 'auto',
-          padding: '0 16px 12px',
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        {CATEGORIES.map((cat) => {
+      {/* 카테고리 필터 칩 */}
+      <div className="cases-chips" role="tablist" aria-label="사례 분야 필터">
+        {categories.map((cat) => {
           const isSelected = activeCategory === cat;
           return (
             <button
               key={cat}
               type="button"
+              role="tab"
+              aria-selected={isSelected}
               onClick={() => setActiveCategory(cat)}
-              style={{
-                flexShrink: 0,
-                padding: '6px 12px',
-                borderRadius: '20px',
-                border: `1px solid ${isSelected ? 'var(--primary)' : '#ddd'}`,
-                background: isSelected ? 'var(--primary)' : '#ffffff',
-                color: isSelected ? '#ffffff' : '#444444',
-                fontSize: '0.8rem',
-                fontWeight: isSelected ? 600 : 400,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
+              className={`cases-chip ${isSelected ? 'selected' : ''}`}
             >
               {cat}
             </button>
@@ -120,82 +136,45 @@ export default function CasesTab({ cases, onOpenPage }) {
         })}
       </div>
 
-      {/* Cases List */}
-      <div
-        style={{
-          padding: '0 16px 30px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {filteredCases.length === 0 ? (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '40px 20px',
-              color: '#888',
-              fontSize: '0.9rem',
-              background: '#ffffff',
-              borderRadius: '8px',
-              border: '1px solid var(--border-light)',
-            }}
-          >
+      {/* 사례 목록 */}
+      <div className="cases-list">
+        {loading ? (
+          <div className="tab-loading-state" role="status" aria-live="polite">
+            <div className="spinner" />
+            <span>성공 사례를 불러오는 중...</span>
+          </div>
+        ) : error ? (
+          <div className="cases-empty-box">
+            <p style={{ marginBottom: '12px' }}>사례 데이터를 불러오지 못했습니다.</p>
+            <button
+              type="button"
+              onClick={onRetry}
+              className="iframe-fallback-btn"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <RotateCw size={14} />
+              다시 시도
+            </button>
+          </div>
+        ) : filteredCases.length === 0 ? (
+          <div className="cases-empty-box">
             검색 결과가 없습니다.
           </div>
         ) : (
-          filteredCases.map((item) => (
-            <div
-              key={item.id}
-              onClick={() =>
-                onOpenPage({
-                  title: `[${item.type}] ${item.title}`,
-                  url: item.url,
-                })
-              }
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '12px 14px',
-                background: '#ffffff',
-                border: '1px solid var(--border-light)',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'transform 0.1s ease',
-              }}
-            >
-              <span
-                style={{
-                  flexShrink: 0,
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  padding: '3px 8px',
-                  borderRadius: '6px',
-                  background: '#f3efe6',
-                  color: 'var(--primary)',
-                }}
+          <>
+            {visibleCases.map((item) => (
+              <CaseItem key={item.id} item={item} onSelect={handleSelectCase} />
+            ))}
+            {hasMore && (
+              <button
+                type="button"
+                className="cases-load-more-btn"
+                onClick={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
               >
-                {item.type}
-              </span>
-              <span
-                style={{
-                  flex: 1,
-                  fontSize: '0.88rem',
-                  color: '#222',
-                  lineHeight: 1.4,
-                  wordBreak: 'keep-all',
-                }}
-              >
-                {item.title}
-              </span>
-              <ChevronRight
-                size={14}
-                style={{ flexShrink: 0, color: '#999' }}
-              />
-            </div>
-          ))
+                더 보기 ({visibleCases.length} / {filteredCases.length}건)
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
