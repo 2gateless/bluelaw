@@ -2,8 +2,8 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import companyData from '../data/company.json';
 
-export default function HomeTab({ onOpenPage }) {
-  const { intro, quote, news } = companyData;
+export default function HomeTab() {
+  const { intro, quote } = companyData;
 
   return (
     <div className="tab-container">
@@ -61,35 +61,6 @@ export default function HomeTab({ onOpenPage }) {
             대표전화: {companyData.phone} | 평일 09:00 ~ 18:00
           </div>
         </div>
-
-        {/* News / Notice Section */}
-        {news && news.length > 0 && (
-          <div style={{ marginTop: '24px' }}>
-            <h3
-              style={{
-                fontSize: '1rem',
-                fontFamily: 'Noto Serif KR, serif',
-                color: 'var(--primary)',
-                marginBottom: '12px',
-                borderLeft: '3px solid var(--secondary)',
-                paddingLeft: '8px',
-              }}
-            >
-              청률 소식 및 공지
-            </h3>
-            {news.map((item) => (
-              <div
-                key={item.id}
-                className="news-card"
-                onClick={() => onOpenPage({ title: item.title, url: item.url })}
-              >
-                <div className="news-title">{item.title}</div>
-                <div className="news-content">{item.content}</div>
-                <span className="news-date">{item.date}</span>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

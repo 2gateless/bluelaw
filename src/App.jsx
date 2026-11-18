@@ -71,7 +71,7 @@ export default function App() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
-        return <HomeTab onOpenPage={handleOpenPage} />;
+        return <HomeTab />;
       case 'lawyers':
         return <LawyersTab onOpenPage={handleOpenPage} />;
       case 'services':
@@ -81,7 +81,7 @@ export default function App() {
       case 'contact':
         return <ContactTab />;
       default:
-        return <HomeTab onOpenPage={handleOpenPage} />;
+        return <HomeTab />;
     }
   };
 
