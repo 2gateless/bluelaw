@@ -1,9 +1,9 @@
 import React from 'react';
-import { Phone, ExternalLink, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import companyData from '../data/company.json';
 
 export default function HomeTab({ onOpenPage }) {
-  const { company, intro, quote, news } = companyData;
+  const { intro, quote, news } = companyData;
 
   return (
     <div className="tab-container">
@@ -40,23 +40,6 @@ export default function HomeTab({ onOpenPage }) {
 
         <p className="quote">{quote}</p>
 
-        {/* Quick Action Buttons */}
-        <div style={{ marginTop: '20px' }}>
-          <a href={`tel:${companyData.phone}`} className="action-btn-primary">
-            <Phone size={18} />
-            법률 상담 전화 연결 ({companyData.phone})
-          </a>
-          <a
-            href={companyData.blogUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="action-btn-secondary"
-          >
-            <ExternalLink size={16} />
-            공식 네이버 블로그 방문하기
-          </a>
-        </div>
-
         {/* Info box */}
         <div
           style={{
@@ -75,7 +58,7 @@ export default function HomeTab({ onOpenPage }) {
             <span>{companyData.address}</span>
           </div>
           <div style={{ borderTop: '1px dashed #eee', paddingTop: '8px', fontSize: '0.8rem', color: '#777' }}>
-            업무시간: 평일 09:00 ~ 18:00 (주말 및 공휴일 휴무)
+            대표전화: {companyData.phone} | 평일 09:00 ~ 18:00
           </div>
         </div>
 

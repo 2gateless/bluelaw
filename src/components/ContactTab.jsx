@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, ExternalLink, Navigation, Clock } from 'lucide-react';
+import { Phone, MapPin, Navigation, Clock } from 'lucide-react';
 import companyData from '../data/company.json';
 
 export default function ContactTab() {
@@ -9,11 +9,7 @@ export default function ContactTab() {
       <div style={{ padding: '0 20px 40px' }}>
         <div className="contact-card">
           {/* Phone */}
-          <a
-            href={`tel:${companyData.phone}`}
-            className="contact-item"
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
+          <div className="contact-item">
             <div
               style={{
                 width: '40px',
@@ -35,7 +31,7 @@ export default function ContactTab() {
                 {companyData.phone}
               </p>
             </div>
-          </a>
+          </div>
 
           <div className="divider" />
 
@@ -89,31 +85,16 @@ export default function ContactTab() {
             </div>
           </div>
 
-          {/* Buttons */}
+          {/* Map Button */}
           <div style={{ marginTop: '16px' }}>
-            <a href={`tel:${companyData.phone}`} className="action-btn-primary">
-              <Phone size={18} />
-              전화 상담 연결하기
-            </a>
-
             <a
               href={companyData.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="action-btn-secondary"
+              className="action-btn-primary"
             >
               <Navigation size={16} />
               네이버 지도로 위치 및 길찾기
-            </a>
-
-            <a
-              href={companyData.blogUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="action-btn-secondary"
-            >
-              <ExternalLink size={16} />
-              청률 네이버 블로그 바로가기
             </a>
           </div>
         </div>
