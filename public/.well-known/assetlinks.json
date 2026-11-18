@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.app_2gateless.twa",
+        "sha256_cert_fingerprints": ["3B:7F:99:71:0E:EA:4B:E8:03:9A:DF:26:CD:67:C3:D0:5E:DC:22:DA:1F:DE:15:D1:66:3F:E8:6D:F9:88:1D:26"]
+      }
+    }]
