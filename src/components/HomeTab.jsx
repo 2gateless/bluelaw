@@ -47,7 +47,7 @@ export default function HomeTab({ subPage, onOpenSubPage, onCloseSubPage, onSele
   // "중대재해 대응팀 운영" 클릭 시 표시되는 담당변호사 및 주요 업무 화면
   if (subPage === 'disaster-team') {
     return (
-      <div className="tab-container" style={{ paddingBottom: '30px' }}>
+      <div className="tab-container disaster-team-view" style={{ paddingBottom: '20px' }}>
         <div className="subpage-header">
           <button
             type="button"
@@ -59,10 +59,6 @@ export default function HomeTab({ subPage, onOpenSubPage, onCloseSubPage, onSele
           </button>
           <h2 className="subpage-title">중대재해 대응팀 담당변호사</h2>
         </div>
-
-        <p className="subpage-summary">
-          노태홍 변호사, 김종운 변호사, 최병일 변호사
-        </p>
 
         <div>
           {disasterTeamLawyers.map((lawyer) => (

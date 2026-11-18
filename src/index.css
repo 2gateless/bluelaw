@@ -778,7 +778,8 @@ button.home-news-btn .news-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
   border-bottom: 1px solid var(--border-light);
   background: #ffffff;
 }
@@ -786,34 +787,49 @@ button.home-news-btn .news-title {
 .subpage-title {
   color: var(--primary);
   font-family: 'Noto Serif KR', serif;
-  font-size: 1.05rem;
+  font-size: 1.02rem;
   font-weight: 700;
   margin: 0;
 }
 
-.subpage-summary {
-  margin: 14px 16px 12px;
-  padding: 10px 14px;
-  background: #ffffff;
-  border: 1px solid var(--border-light);
-  border-left: 3px solid var(--secondary);
-  border-radius: 6px;
-  font-size: 0.85rem;
-  color: var(--primary);
-  font-weight: 600;
+.disaster-team-view .lawyer-card-v2 {
+  width: calc(100% - 28px);
+  margin: 0 14px 6px;
+  padding: 8px 12px;
+  gap: 10px;
+}
+
+.disaster-team-view .lawyer-photo-circle {
+  width: 52px;
+  height: 52px;
+}
+
+.disaster-team-view .lawyer-info h3 {
+  font-size: 0.95rem;
+}
+
+.disaster-team-view .lawyer-career {
+  font-size: 0.76rem;
+  margin-top: 2px;
+  line-height: 1.25;
+}
+
+.disaster-team-view .detail-tag {
+  margin-top: 3px;
+  font-size: 0.7rem;
 }
 
 .major-tasks-section {
-  margin: 18px 15px 0;
+  margin: 12px 14px 0;
 }
 
 .major-tasks-heading {
   color: var(--primary);
   font-family: 'Noto Serif KR', serif;
-  font-size: 1.02rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  padding-bottom: 6px;
-  margin-bottom: 10px;
+  padding-bottom: 4px;
+  margin-bottom: 8px;
   border-bottom: 1px solid var(--secondary);
 }
 
@@ -821,22 +837,22 @@ button.home-news-btn .news-title {
   background: var(--card-bg);
   border: 1px solid var(--border-light);
   border-radius: 8px;
-  padding: 14px 16px;
+  padding: 10px 12px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .major-tasks-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 
 .major-tasks-category {
   color: var(--primary);
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 700;
   margin: 0;
 }
@@ -847,16 +863,16 @@ button.home-news-btn .news-title {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 3px;
 }
 
 .major-tasks-item {
   display: flex;
   align-items: flex-start;
-  gap: 7px;
-  font-size: 0.83rem;
+  gap: 6px;
+  font-size: 0.78rem;
   color: #333333;
-  line-height: 1.45;
+  line-height: 1.35;
   word-break: keep-all;
 }
 
