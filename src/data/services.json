@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "title": "민사",
+    "icon": "FileText",
+    "url": "https://bluelaw.co.kr/page/civil.php?me_code=3010"
+  },
+  {
+    "id": 2,
+    "title": "형사",
+    "icon": "Gavel",
+    "url": "https://bluelaw.co.kr/page/crime.php?me_code=3020"
+  },
+  {
+    "id": 3,
+    "title": "가사",
+    "icon": "Heart",
+    "url": "https://bluelaw.co.kr/page/family.php?me_code=3030"
+  },
+  {
+    "id": 4,
+    "title": "일반행정",
+    "icon": "Scale",
+    "url": "https://bluelaw.co.kr/page/administration.php?me_code=3060"
+  },
+  {
+    "id": 5,
+    "title": "기업회생 및 파산",
+    "icon": "Building",
+    "url": "https://bluelaw.co.kr/page/bankruptcy.php?me_code=3040"
+  },
+  {
+    "id": 6,
+    "title": "조세",
+    "icon": "Coins",
+    "url": "https://bluelaw.co.kr/page/tax.php?me_code=3050"
+  },
+  {
+    "id": 7,
+    "title": "중재",
+    "icon": "MessageSquare",
+    "url": "https://bluelaw.co.kr/page/arbitration.php?me_code=3070"
+  }
+]

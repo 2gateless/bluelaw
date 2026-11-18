@@ -1,5 +1,7 @@
+import datetime
 import html
 import json
+import os
 import re
 import sys
 import urllib.request
@@ -25,8 +27,13 @@ def fetch_all_cases():
     page = 1
     while True:
         req = urllib.request.Request(BASE_URL.format(page=page), headers=HEADERS)
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            body = resp.read().decode("utf-8", errors="replace")
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                body = resp.read().decode("utf-8", errors="replace")
+        except Exception as e:
+            print(f"Error fetching page {page}: {e}", file=sys.stderr)
+            break
+
         matches = ITEM_RE.findall(body)
         if not matches:
             break
@@ -52,13 +59,24 @@ def fetch_all_cases():
 
 def main():
     items = fetch_all_cases()
-    if not items:
-        print("No cases fetched; keeping existing cases.json", file=sys.stderr)
-        sys.exit(1)
-    with open("cases.json", "w", encoding="utf-8") as f:
-        json.dump(items, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-    print(f"Synced {len(items)} cases to cases.json")
+    # Safety gate: if fetched items is unreasonably small (e.g. IP block, site maintenance), abort
+    if not items or len(items) < 50:
+        print(f"Safety check triggered: only {len(items)} cases fetched. Keeping existing files.", file=sys.stderr)
+        sys.exit(0)
+
+    # Save to cases.json and public/cases.json
+    for target in ["cases.json", "public/cases.json"]:
+        os.makedirs(os.path.dirname(target) if os.path.dirname(target) else ".", exist_ok=True)
+        with open(target, "w", encoding="utf-8") as f:
+            json.dump(items, f, ensure_ascii=False, indent=2)
+            f.write("\n")
+
+    # Record sync timestamp for keepalive and audit
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    with open("last_synced.txt", "w", encoding="utf-8") as f:
+        f.write(f"last_synced: {now}\ntotal_cases: {len(items)}\n")
+
+    print(f"Successfully synced {len(items)} cases at {now}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,142 @@
+{
+  "partners": [
+    {
+      "id": 1,
+      "name": "권재창",
+      "position": "구성원 변호사",
+      "career": "서울대 사법학과, 前 부산지법 판사",
+      "photo": "./images/lawyer_1_kwon.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=2"
+    },
+    {
+      "id": 2,
+      "name": "이승기",
+      "position": "구성원 변호사",
+      "career": "고려대 법학과, 前 부산지법 판사",
+      "photo": "./images/lawyer_2_lee.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=7"
+    },
+    {
+      "id": 3,
+      "name": "노태홍",
+      "position": "구성원 변호사",
+      "career": "고려대 생물학과, 前 서울중앙지법/부산지법 판사",
+      "photo": "./images/lawyer_3_noh.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=5"
+    },
+    {
+      "id": 4,
+      "name": "김종운",
+      "position": "구성원 변호사",
+      "career": "서울대 사법학과, 前 부산고법 판사",
+      "photo": "./images/lawyer_4_kim_j.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=3"
+    },
+    {
+      "id": 5,
+      "name": "김태창",
+      "position": "구성원 변호사",
+      "career": "서울대 법학과, 前 부산지법 부장판사",
+      "photo": "./images/lawyer_5_kim_t.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=4"
+    },
+    {
+      "id": 6,
+      "name": "오세화",
+      "position": "구성원 변호사",
+      "career": "서울대 법학과, 前 부산지법 부장판사",
+      "photo": "./images/lawyer_6_oh.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=6"
+    },
+    {
+      "id": 7,
+      "name": "이채문",
+      "position": "구성원 변호사",
+      "career": "서울대 사법학과, 第56代 부산지방변호사회 회장",
+      "photo": "./images/lawyer_7_lee_c.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=8"
+    },
+    {
+      "id": 8,
+      "name": "전지환",
+      "position": "구성원 변호사",
+      "career": "고려대 법학과, 前 창원지법 수석부장판사",
+      "photo": "./images/lawyer_8_jeon.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=9"
+    },
+    {
+      "id": 9,
+      "name": "최병일",
+      "position": "구성원 변호사",
+      "career": "부경대 법학과, 사법연수원 34기",
+      "photo": "./images/lawyer_9_choi_b.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=11"
+    },
+    {
+      "id": 10,
+      "name": "최창용",
+      "position": "구성원 변호사",
+      "career": "서울대 졸업, 前 부산지법 판사",
+      "photo": "./images/lawyer_10_choi_c.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=12"
+    },
+    {
+      "id": 11,
+      "name": "허상수",
+      "position": "구성원 변호사",
+      "career": "성균관대 법학과, 前 부산지법 부장판사",
+      "photo": "./images/lawyer_11_heo.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=13"
+    },
+    {
+      "id": 12,
+      "name": "김종기",
+      "position": "구성원 변호사",
+      "career": "서울대 법학과, 前 울산지법 부장판사",
+      "photo": "./images/lawyer_12_kim_jk.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=14"
+    },
+    {
+      "id": 13,
+      "name": "이동준",
+      "position": "구성원 변호사",
+      "career": "서울대 법학과, 前 부산고법 판사",
+      "photo": "./images/lawyer_13_lee_dj.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=15"
+    },
+    {
+      "id": 14,
+      "name": "장희석",
+      "position": "구성원 변호사",
+      "career": "서울대 법학과, 前 울산지법 부장판사",
+      "photo": "./images/lawyer_14_jang.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=16"
+    },
+    {
+      "id": 15,
+      "name": "이동명",
+      "position": "구성원 변호사",
+      "career": "제4회 변호사시험 합격, 2015년 변호사 개업",
+      "photo": "./images/lawyer_15_lee_dm.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=19"
+    }
+  ],
+  "associates": [
+    {
+      "id": 16,
+      "name": "이효경",
+      "position": "소속 변호사",
+      "career": "부산대 로스쿨, 제11회 변호사시험 합격",
+      "photo": "./images/lawyer_16_lee_hk.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=21"
+    },
+    {
+      "id": 17,
+      "name": "최주혜",
+      "position": "소속 변호사",
+      "career": "동아대 로스쿨, 제13회 변호사시험 합격",
+      "photo": "./images/lawyer_17_choi_jh.webp",
+      "url": "https://bluelaw.co.kr/page/member_view.php?&wr_id=22"
+    }
+  ]
+}
