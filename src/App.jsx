@@ -22,6 +22,7 @@ function TabFallback() {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
+  const [homeSubPage, setHomeSubPage] = useState(null);
   const [viewPage, setViewPage] = useState(null);
   const [cases, setCases] = useState([]);
   const [casesLoading, setCasesLoading] = useState(true);
@@ -64,12 +65,13 @@ export default function App() {
   // 브라우저 뒤로가기/앞으로가기 히스토리 동기화
   useEffect(() => {
     if (!window.history.state) {
-      window.history.replaceState({ tab: 'home', viewPage: null }, '');
+      window.history.replaceState({ tab: 'home', homeSubPage: null, viewPage: null }, '');
     }
 
     const handlePopState = (event) => {
-      const state = event.state || { tab: 'home', viewPage: null };
+      const state = event.state || { tab: 'home', homeSubPage: null, viewPage: null };
       setActiveTab(state.tab || 'home');
+      setHomeSubPage(state.homeSubPage || null);
       setViewPage(state.viewPage || null);
     };
 
@@ -77,30 +79,56 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // 탭 전환 시 본문 스크롤을 최상단으로 초기화
+  // 탭 또는 홈 하위 화면 전환 시 본문 스크롤을 최상단으로 초기화
   useEffect(() => {
     if (contentRef.current) {
       contentRef.current.scrollTo({ top: 0 });
     }
-  }, [activeTab]);
+  }, [activeTab, homeSubPage]);
 
   const handleSelectTab = useCallback(
     (tabId) => {
-      if (tabId === activeTab && !viewPage) return;
+      if (tabId === activeTab && !viewPage && !homeSubPage) return;
       setActiveTab(tabId);
+      setHomeSubPage(null);
       setViewPage(null);
-      window.history.pushState({ tab: tabId, viewPage: null }, '');
+      window.history.pushState({ tab: tabId, homeSubPage: null, viewPage: null }, '');
     },
-    [activeTab, viewPage]
+    [activeTab, viewPage, homeSubPage]
   );
+
+  const handleOpenHomeSubPage = useCallback((subPageId) => {
+    setHomeSubPage(subPageId);
+    window.history.pushState({ tab: 'home', homeSubPage: subPageId, viewPage: null }, '');
+  }, []);
+
+  const handleCloseHomeSubPage = useCallback(() => {
+    if (window.history.state && window.history.state.homeSubPage) {
+      window.history.back();
+    } else {
+      setHomeSubPage(null);
+    }
+  }, []);
 
   const handleOpenPage = useCallback(
     (page) => {
       setViewPage(page);
-      window.history.pushState({ tab: activeTab, viewPage: page }, '');
+      window.history.pushState({ tab: activeTab, homeSubPage, viewPage: page }, '');
     },
-    [activeTab]
+    [activeTab, homeSubPage]
   );
+
+  // 최근 소식 등에서 변호사 선택 시 변호사 소개 탭으로 이동해 상세 정보 표시
+  const handleOpenLawyerFromNews = useCallback((lawyer) => {
+    const page = {
+      title: `${lawyer.name} ${lawyer.position}`,
+      url: lawyer.url,
+    };
+    setActiveTab('lawyers');
+    setHomeSubPage(null);
+    setViewPage(page);
+    window.history.pushState({ tab: 'lawyers', homeSubPage: null, viewPage: page }, '');
+  }, []);
 
   const handleClosePage = useCallback(() => {
     if (window.history.state && window.history.state.viewPage) {
@@ -117,7 +145,14 @@ export default function App() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
-        return <HomeTab />;
+        return (
+          <HomeTab
+            subPage={homeSubPage}
+            onOpenSubPage={handleOpenHomeSubPage}
+            onCloseSubPage={handleCloseHomeSubPage}
+            onSelectLawyer={handleOpenLawyerFromNews}
+          />
+        );
       case 'lawyers':
         return <LawyersTab onOpenPage={handleOpenPage} />;
       case 'services':
@@ -135,7 +170,14 @@ export default function App() {
       case 'contact':
         return <ContactTab />;
       default:
-        return <HomeTab />;
+        return (
+          <HomeTab
+            subPage={homeSubPage}
+            onOpenSubPage={handleOpenHomeSubPage}
+            onCloseSubPage={handleCloseHomeSubPage}
+            onSelectLawyer={handleOpenLawyerFromNews}
+          />
+        );
     }
   };
 
