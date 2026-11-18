@@ -8,21 +8,9 @@ export default function ContactTab() {
       <h2 className="section-header">문의 및 오시는 길</h2>
       <div style={{ padding: '0 20px 40px' }}>
         <div className="contact-card">
-          {/* Phone */}
+          {/* 직통 전화 */}
           <div className="contact-item">
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: '#eef3f8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--primary)',
-                flexShrink: 0,
-              }}
-            >
+            <div className="contact-icon-badge phone">
               <Phone size={20} />
             </div>
             <div>
@@ -35,21 +23,9 @@ export default function ContactTab() {
 
           <div className="divider" />
 
-          {/* Address */}
+          {/* 사무소 주소 */}
           <div className="contact-item">
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: '#f8f4ee',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--secondary)',
-                flexShrink: 0,
-              }}
-            >
+            <div className="contact-icon-badge address">
               <MapPin size={20} />
             </div>
             <div>
@@ -60,21 +36,9 @@ export default function ContactTab() {
 
           <div className="divider" />
 
-          {/* Hours */}
+          {/* 업무 시간 */}
           <div className="contact-item">
-            <div
-              style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '50%',
-                background: '#f5f5f5',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#666',
-                flexShrink: 0,
-              }}
-            >
+            <div className="contact-icon-badge hours">
               <Clock size={20} />
             </div>
             <div>
@@ -85,7 +49,7 @@ export default function ContactTab() {
             </div>
           </div>
 
-          {/* Map Button */}
+          {/* 네이버 지도 버튼 */}
           <div style={{ marginTop: '16px' }}>
             <a
               href={companyData.mapUrl}

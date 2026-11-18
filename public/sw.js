@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bluelaw-v3';
+const CACHE_NAME = 'bluelaw-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -33,8 +33,10 @@ self.addEventListener('fetch', (event) => {
   // http/https 외의 확장 프로그램 스킴 등은 가로채지 않음
   if (!url.protocol.startsWith('http')) return;
 
+  const isSameOrigin = url.origin === self.location.origin;
+
   // cases.json: 캐시를 우선 반환하고 백그라운드에서 최신 데이터 갱신 (SWR)
-  if (url.origin === self.location.origin && url.pathname.endsWith('cases.json')) {
+  if (isSameOrigin && url.pathname.endsWith('cases.json')) {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cachedResponse = await cache.match(event.request);
@@ -58,7 +60,30 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 일반 요청: 네트워크 우선, 실패 시 캐시(네비게이션 요청은 index.html) 폴백
+  // 해시된 정적 번들(/assets/) 및 이미지(/images/): Cache-First 전략으로 빠른 재방문 로딩 제공
+  if (
+    isSameOrigin &&
+    (url.pathname.includes('/assets/') || url.pathname.includes('/images/'))
+  ) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async (cache) => {
+        const cached = await cache.match(event.request);
+        if (cached) return cached;
+        try {
+          const response = await fetch(event.request);
+          if (response && response.ok) {
+            cache.put(event.request, response.clone());
+          }
+          return response;
+        } catch {
+          return Response.error();
+        }
+      })
+    );
+    return;
+  }
+
+  // HTML 문서 및 일반 요청: 네트워크 우선, 실패 시 캐시(네비게이션 요청은 index.html) 폴백
   event.respondWith(
     fetch(event.request)
       .then((response) => {

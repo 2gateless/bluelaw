@@ -2,9 +2,11 @@ import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeTab from './components/HomeTab';
+import ErrorBoundary from './components/ErrorBoundary';
 import companyData from './data/company.json';
 
-// 초기 진입 번들 크기를 줄이기 위해 하위 탭 및 뷰어를 지연 로딩
+// 초기 진입 번들 크기를 줄이기 위해 하위 탭 및 상세 화면을 지연 로딩
+const DisasterTeamView = lazy(() => import('./components/DisasterTeamView'));
 const LawyersTab = lazy(() => import('./components/LawyersTab'));
 const ServicesTab = lazy(() => import('./components/ServicesTab'));
 const CasesTab = lazy(() => import('./components/CasesTab'));
@@ -25,11 +27,12 @@ export default function App() {
   const [homeSubPage, setHomeSubPage] = useState(null);
   const [viewPage, setViewPage] = useState(null);
   const [cases, setCases] = useState([]);
-  const [casesLoading, setCasesLoading] = useState(true);
+  const [casesLoading, setCasesLoading] = useState(false);
   const [casesError, setCasesError] = useState(false);
+  const casesFetchedRef = useRef(false);
   const contentRef = useRef(null);
 
-  // 성공사례 JSON 데이터를 불러오는 함수 (재시도 지원)
+  // 성공사례 JSON 데이터를 불러오는 함수 (사례 탭 진입 시 지연 로드 및 재시도 지원)
   const fetchCases = useCallback((signal) => {
     setCasesLoading(true);
     setCasesError(false);
@@ -42,11 +45,8 @@ export default function App() {
         return res.json();
       })
       .then((data) => {
-        if (Array.isArray(data)) {
-          setCases(data);
-        } else {
-          setCases([]);
-        }
+        setCases(Array.isArray(data) ? data : []);
+        casesFetchedRef.current = true;
         setCasesLoading(false);
       })
       .catch((err) => {
@@ -56,11 +56,13 @@ export default function App() {
       });
   }, []);
 
+  // 사례 탭에 처음 진입할 때만 cases.json 요청 수행
   useEffect(() => {
+    if (activeTab !== 'cases' || casesFetchedRef.current) return;
     const controller = new AbortController();
     fetchCases(controller.signal);
     return () => controller.abort();
-  }, [fetchCases]);
+  }, [activeTab, fetchCases]);
 
   // 브라우저 뒤로가기/앞으로가기 히스토리 동기화
   useEffect(() => {
@@ -118,7 +120,7 @@ export default function App() {
     [activeTab, homeSubPage]
   );
 
-  // 최근 소식 등에서 변호사 선택 시 변호사 소개 탭으로 이동해 상세 정보 표시
+  // 알림(중대재해 대응팀)에서 변호사 선택 시 변호사 소개 탭으로 이동해 상세 정보 표시
   const handleOpenLawyerFromNews = useCallback((lawyer) => {
     const page = {
       title: `${lawyer.name} ${lawyer.position}`,
@@ -145,14 +147,15 @@ export default function App() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
-        return (
-          <HomeTab
-            subPage={homeSubPage}
-            onOpenSubPage={handleOpenHomeSubPage}
-            onCloseSubPage={handleCloseHomeSubPage}
-            onSelectLawyer={handleOpenLawyerFromNews}
-          />
-        );
+        if (homeSubPage === 'disaster-team') {
+          return (
+            <DisasterTeamView
+              onClose={handleCloseHomeSubPage}
+              onSelectLawyer={handleOpenLawyerFromNews}
+            />
+          );
+        }
+        return <HomeTab onOpenSubPage={handleOpenHomeSubPage} />;
       case 'lawyers':
         return <LawyersTab onOpenPage={handleOpenPage} />;
       case 'services':
@@ -170,14 +173,7 @@ export default function App() {
       case 'contact':
         return <ContactTab />;
       default:
-        return (
-          <HomeTab
-            subPage={homeSubPage}
-            onOpenSubPage={handleOpenHomeSubPage}
-            onCloseSubPage={handleCloseHomeSubPage}
-            onSelectLawyer={handleOpenLawyerFromNews}
-          />
-        );
+        return <HomeTab onOpenSubPage={handleOpenHomeSubPage} />;
     }
   };
 
@@ -186,17 +182,21 @@ export default function App() {
       <Header title={companyData.name} />
 
       <main ref={contentRef} className="content-area">
-        <Suspense fallback={<TabFallback />}>
-          {renderTabContent()}
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={<TabFallback />}>
+            {renderTabContent()}
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       <BottomNav activeTab={activeTab} onSelectTab={handleSelectTab} />
 
       {viewPage && (
-        <Suspense fallback={null}>
-          <IframeViewer page={viewPage} onClose={handleClosePage} />
-        </Suspense>
+        <ErrorBoundary>
+          <Suspense fallback={null}>
+            <IframeViewer page={viewPage} onClose={handleClosePage} />
+          </Suspense>
+        </ErrorBoundary>
       )}
     </div>
   );

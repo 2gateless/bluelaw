@@ -11,7 +11,7 @@ const TABS = [
 
 export default function BottomNav({ activeTab, onSelectTab }) {
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="주요 메뉴">
       {TABS.map((tab) => {
         const Icon = tab.icon;
         const isActive = activeTab === tab.id;
@@ -20,6 +20,7 @@ export default function BottomNav({ activeTab, onSelectTab }) {
             key={tab.id}
             type="button"
             className={`nav-item-v2 ${isActive ? 'active' : ''}`}
+            aria-current={isActive ? 'page' : undefined}
             onClick={() => onSelectTab(tab.id)}
           >
             <Icon size={22} />
