@@ -21,8 +21,10 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Local cache
+# Local cache & Python bytecode
 .cache/
+__pycache__/
+*.py[cod]
 
 # PWA Builder Google Play package (keystore 등 민감 파일 포함)
 *Google Play package/

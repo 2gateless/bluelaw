@@ -118,15 +118,14 @@ export default function CasesTab({ cases, loading, error, onRetry, onOpenPage })
       </div>
 
       {/* 카테고리 필터 칩 */}
-      <div className="cases-chips" role="tablist" aria-label="사례 분야 필터">
+      <div className="cases-chips" role="group" aria-label="사례 분야 필터">
         {categories.map((cat) => {
           const isSelected = activeCategory === cat;
           return (
             <button
               key={cat}
               type="button"
-              role="tab"
-              aria-selected={isSelected}
+              aria-pressed={isSelected}
               onClick={() => setActiveCategory(cat)}
               className={`cases-chip ${isSelected ? 'selected' : ''}`}
             >

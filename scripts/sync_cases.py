@@ -4,9 +4,11 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.request
 
 BASE_URL = "https://bluelaw.co.kr/bbs/board.php?bo_table=case&page={page}"
+TARGET_PATH = os.path.join("public", "cases.json")
 HEADERS = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -19,6 +21,28 @@ ITEM_RE = re.compile(
     r'<p\s+class="subject">\s*(.*?)\s*</p>',
     re.S,
 )
+MAX_RETRIES = 3
+
+
+def fetch_page_html(page):
+    url = BASE_URL.format(page=page)
+    last_err = None
+    for attempt in range(1, MAX_RETRIES + 1):
+        req = urllib.request.Request(url, headers=HEADERS)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                if resp.status != 200:
+                    raise RuntimeError(f"HTTP {resp.status}")
+                return resp.read().decode("utf-8", errors="replace")
+        except Exception as err:
+            last_err = err
+            print(
+                f"Warning: page {page} attempt {attempt}/{MAX_RETRIES} failed: {err}",
+                file=sys.stderr,
+            )
+            if attempt < MAX_RETRIES:
+                time.sleep(2 * attempt)
+    raise RuntimeError(f"Failed to fetch page {page} after {MAX_RETRIES} attempts: {last_err}")
 
 
 def fetch_all_cases():
@@ -26,14 +50,7 @@ def fetch_all_cases():
     seen_ids = set()
     page = 1
     while True:
-        req = urllib.request.Request(BASE_URL.format(page=page), headers=HEADERS)
-        try:
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                body = resp.read().decode("utf-8", errors="replace")
-        except Exception as e:
-            print(f"Error fetching page {page}: {e}", file=sys.stderr)
-            break
-
+        body = fetch_page_html(page)
         matches = ITEM_RE.findall(body)
         if not matches:
             break
@@ -57,21 +74,40 @@ def fetch_all_cases():
     return items
 
 
+def load_existing_count(path):
+    if not os.path.exists(path):
+        return 0
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return len(data) if isinstance(data, list) else 0
+    except Exception:
+        return 0
+
+
 def main():
-    items = fetch_all_cases()
-    # Safety gate: if fetched items is unreasonably small (e.g. IP block, site maintenance), abort
-    if not items or len(items) < 50:
-        print(f"Safety check triggered: only {len(items)} cases fetched. Keeping existing files.", file=sys.stderr)
-        sys.exit(0)
+    try:
+        items = fetch_all_cases()
+    except Exception as err:
+        print(f"Sync aborted due to fetch error: {err}", file=sys.stderr)
+        sys.exit(1)
 
-    # Save to cases.json and public/cases.json
-    for target in ["cases.json", "public/cases.json"]:
-        os.makedirs(os.path.dirname(target) if os.path.dirname(target) else ".", exist_ok=True)
-        with open(target, "w", encoding="utf-8") as f:
-            json.dump(items, f, ensure_ascii=False, indent=2)
-            f.write("\n")
+    existing_count = load_existing_count(TARGET_PATH)
+    min_expected = max(50, int(existing_count * 0.9))
 
-    # Record sync timestamp for keepalive and audit
+    if len(items) < min_expected:
+        print(
+            f"Safety gate triggered: fetched {len(items)} cases, expected >= {min_expected} "
+            f"(existing: {existing_count}). Keeping existing {TARGET_PATH}.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    os.makedirs(os.path.dirname(TARGET_PATH), exist_ok=True)
+    with open(TARGET_PATH, "w", encoding="utf-8") as f:
+        json.dump(items, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
     with open("last_synced.txt", "w", encoding="utf-8") as f:
         f.write(f"last_synced: {now}\ntotal_cases: {len(items)}\n")

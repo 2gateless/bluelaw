@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import { flushSync } from 'react-dom';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeTab from './components/HomeTab';
+import IframeViewer from './components/IframeViewer';
 import ErrorBoundary from './components/ErrorBoundary';
 import companyData from './data/company.json';
 
-// 초기 진입 번들 크기를 줄이기 위해 하위 탭 및 상세 화면을 지연 로딩
+// 초기 진입 번들 크기를 줄이기 위해 하위 탭 화면을 지연 로딩
 const DisasterTeamView = lazy(() => import('./components/DisasterTeamView'));
 const LawyersTab = lazy(() => import('./components/LawyersTab'));
 const ServicesTab = lazy(() => import('./components/ServicesTab'));
 const CasesTab = lazy(() => import('./components/CasesTab'));
 const ContactTab = lazy(() => import('./components/ContactTab'));
-const IframeViewer = lazy(() => import('./components/IframeViewer'));
 
 function TabFallback() {
   return (
@@ -120,25 +121,35 @@ export default function App() {
     [activeTab, homeSubPage]
   );
 
-  // 알림(중대재해 대응팀)에서 변호사 선택 시 변호사 소개 탭으로 이동해 상세 정보 표시
-  const handleOpenLawyerFromNews = useCallback((lawyer) => {
-    const page = {
-      title: `${lawyer.name} ${lawyer.position}`,
-      url: lawyer.url,
-    };
-    setActiveTab('lawyers');
-    setHomeSubPage(null);
-    setViewPage(page);
-    window.history.pushState({ tab: 'lawyers', homeSubPage: null, viewPage: page }, '');
-  }, []);
+  // 중대재해 대응팀 화면에서 변호사 선택 시 현재 하위 화면 상태를 유지한 채 상세 뷰어만 표시
+  const handleOpenLawyerFromSubPage = useCallback(
+    (lawyer) => {
+      handleOpenPage({
+        title: `${lawyer.name} ${lawyer.position}`,
+        url: lawyer.url,
+      });
+    },
+    [handleOpenPage]
+  );
 
+  // 뷰어 닫기 시 iframe을 먼저 언마운트하여 내부 페이지 이동 후에도 즉시 닫히도록 보장
   const handleClosePage = useCallback(() => {
-    if (window.history.state && window.history.state.viewPage) {
-      window.history.back();
-    } else {
+    const hadHistoryView = Boolean(window.history.state && window.history.state.viewPage);
+    flushSync(() => {
       setViewPage(null);
+    });
+    if (hadHistoryView) {
+      window.history.back();
+      setTimeout(() => {
+        if (window.history.state && window.history.state.viewPage) {
+          window.history.replaceState(
+            { tab: activeTab, homeSubPage, viewPage: null },
+            ''
+          );
+        }
+      }, 50);
     }
-  }, []);
+  }, [activeTab, homeSubPage]);
 
   const handleRetryCases = useCallback(() => {
     fetchCases();
@@ -151,7 +162,7 @@ export default function App() {
           return (
             <DisasterTeamView
               onClose={handleCloseHomeSubPage}
-              onSelectLawyer={handleOpenLawyerFromNews}
+              onSelectLawyer={handleOpenLawyerFromSubPage}
             />
           );
         }
@@ -193,9 +204,7 @@ export default function App() {
 
       {viewPage && (
         <ErrorBoundary>
-          <Suspense fallback={null}>
-            <IframeViewer page={viewPage} onClose={handleClosePage} />
-          </Suspense>
+          <IframeViewer page={viewPage} onClose={handleClosePage} />
         </ErrorBoundary>
       )}
     </div>

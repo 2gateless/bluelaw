@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bluelaw-v4';
+const CACHE_NAME = 'bluelaw-__SW_BUILD_VERSION__';
 const CORE_ASSETS = [
   './',
   './index.html',
